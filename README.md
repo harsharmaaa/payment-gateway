@@ -1,125 +1,84 @@
 # Payment Gateway UI
 
-A production-ready Payment Gateway UI built with Next.js (App Router), TypeScript, Tailwind CSS, and Zustand for state management. This project demonstrates a complete payment flow with real-time validation, card detection, retry logic, and transaction history persistence.
+A simple payment gateway UI built with Next.js, TypeScript, Tailwind CSS, and Zustand.  
+This project simulates a real payment flow with validation, transaction handling, retry logic, and transaction history.
+
+---
 
 ## Features
 
-- **Real-time Form Validation**: Validates cardholder name, card number, expiry, CVV, and amount as user types
-- **Card Type Detection**: Automatically detects Visa, Mastercard, and Amex from card number
-- **Card Number Formatting**: Auto-formats card number with spaces every 4 digits
-- **Live Card Preview**: Visual card preview that updates in real-time
-- **Payment Lifecycle**: Supports Idle, Processing, Success, Failed, and Timeout states
-- **Mock Payment API**: Server-side randomized responses (60% success, 25% failed, 15% timeout)
-- **Timeout Handling**: Frontend cancels requests after 6 seconds using AbortController
-- **Retry Logic**: Maximum 3 retry attempts with attempt counter
-- **Transaction History**: Persists across page refreshes using localStorage
-- **Idempotency**: Uses unique transaction ID for retries to prevent duplicates
-- **Responsive Design**: Works on mobile (375px) and desktop (1280px)
-- **Accessibility**: Proper ARIA labels, error descriptions, and focus management
+- Real-time form validation
+- Card type detection (Visa, Mastercard, Amex)
+- Auto card number formatting
+- Live card preview
+- Payment status handling (Success, Failed, Timeout)
+- Retry payment support (up to 3 attempts)
+- Transaction history with localStorage
+- Responsive UI for mobile and desktop
+- Mock payment API with random responses
+
+---
 
 ## Tech Stack
 
-- **Next.js 16** - React framework with App Router
-- **TypeScript** - Type-safe development
-- **Tailwind CSS 4** - Utility-first CSS framework
-- **Zustand** - Lightweight state management
-- **React 19** - UI library
+- Next.js
+- React
+- TypeScript
+- Tailwind CSS
+- Zustand
+
+---
 
 ## Project Structure
 
-```
+```bash
 payment-gateway/
 ├── app/
-│   ├── api/
-│   │   └── pay/
-│   │       └── route.ts          # Mock payment API endpoint
-│   ├── layout.tsx                # Root layout
-│   ├── page.tsx                  # Main payment page
-│   └── globals.css               # Global styles
 ├── components/
-│   ├── CardInput.tsx             # Reusable input component
-│   ├── CardPreview.tsx           # Live card preview
-│   ├── PaymentForm.tsx           # Payment form
-│   ├── StatusScreen.tsx          # Payment status screens
-│   └── TransactionHistory.tsx    # Transaction history list
 ├── hooks/
-│   └── usePaymentForm.ts         # Form validation hook
 ├── store/
-│   └── paymentStore.ts           # Zustand state store
 ├── types/
-│   └── index.ts                  # TypeScript types
 ├── utils/
-│   ├── cardValidation.ts         # Validation functions
-│   ├── cardFormatting.ts         # Formatting functions
-│   └── api.ts                    # API utilities
 └── package.json
 ```
 
+---
+
 ## Getting Started
 
-### Prerequisites
+### Install Dependencies
 
-- Node.js 18+ installed
-- npm, yarn, pnpm, or bun package manager
-
-### Installation
-
-1. Navigate to the project directory:
-```bash
-cd payment-gateway
-```
-
-2. Install dependencies (if not already installed):
 ```bash
 npm install
 ```
 
-3. Run the development server:
+### Run Development Server
+
 ```bash
 npm run dev
 ```
 
-4. Open [http://localhost:3000](http://localhost:3000) in your browser
+Open:
 
-## Usage
+```bash
+http://localhost:3000
+```
 
-### Making a Payment
+---
 
-1. Fill in the payment form:
-   - Cardholder name
-   - Card number (auto-formats with spaces)
-   - Expiry date (MM/YY format)
-   - CVV (3 digits for Visa/Mastercard, 4 for Amex)
-   - Amount
-   - Currency (INR or USD)
+## Payment API
 
-2. The form validates in real-time. Submit button is disabled until form is valid.
+### POST `/api/pay`
 
-3. Click "Pay Now" to submit payment.
+Mock payment API that returns random responses:
 
-4. View the processing state, then success or failure result.
+- 60% Success
+- 25% Failed
+- 15% Timeout
 
-5. On failure/timeout, you can retry (max 3 attempts) or start a new payment.
+Example request:
 
-### Transaction History
-
-- All successful transactions are saved to localStorage
-- History persists across page refreshes
-- Click any transaction to view detailed information
-- Transaction ID, amount, status, and timestamp are displayed
-
-## API Endpoint
-
-### POST /api/pay
-
-Mock payment gateway endpoint that returns randomized responses:
-
-- **Success (60%)**: Payment processed successfully
-- **Failed (25%)**: Payment failed with reason (e.g., "Insufficient funds")
-- **Timeout (15%)**: Response delayed by 8 seconds (frontend cancels after 6s)
-
-Request body:
-```typescript
+```ts
 {
   cardholderName: string;
   cardNumber: string;
@@ -131,69 +90,49 @@ Request body:
 }
 ```
 
-Response:
-```typescript
-{
-  status: PaymentStatus;
-  transactionId: string;
-  message?: string;
-}
+---
+
+## Test Cards
+
+### Visa
+
+```text
+4242 4242 4242 4242
 ```
 
-## Assumptions
+### Mastercard
 
-- Card validation uses Luhn algorithm for basic validation
-- CVV length is 3 digits for Visa/Mastercard, 4 for Amex
-- Expiry dates are validated against current date
-- Transaction history is stored in browser localStorage
-- Mock API simulates real-world payment gateway behavior
-- No actual payment processing occurs (demo only)
+```text
+5555 5555 5555 4444
+```
 
-## Future Improvements
+### Amex
 
-Given more time, the following could be added:
+```text
+3782 822463 10005
+```
 
-- Integration with real payment gateway (Stripe, Razorpay, PayPal)
-- More comprehensive card validation (BIN lookup)
-- Support for more card types (Discover, JCB, etc.)
-- Payment method selection (card, UPI, net banking)
-- Saved payment methods
-- Multi-language support
-- Advanced analytics and reporting
-- Webhook integration for payment notifications
-- Enhanced security features (3D Secure, OTP verification)
-- Unit and integration tests
-- E2E testing with Playwright
-- Performance optimization and lazy loading
-- PWA capabilities for offline support
+---
 
-## Deployment
+## Main Functionalities
 
-### Vercel (Recommended)
+- Luhn algorithm based card validation
+- Expiry date validation
+- CVV validation based on card type
+- Timeout handling using AbortController
+- Persistent transaction history
 
-1. Push code to GitHub repository
-2. Import project in Vercel
-3. Deploy automatically
+---
 
-### Other Platforms
-
-The project can be deployed to any platform that supports Next.js:
-- Netlify
-- AWS Amplify
-- Railway
-- Render
-
-## Build for Production
+## Run Production Build
 
 ```bash
 npm run build
 npm start
 ```
 
-## License
+---
 
-This project is for demonstration purposes only.
+## Note
 
-## Contributing
-
-This is a demo project. For production use, integrate with a real payment gateway provider.
+This project is made for learning/demo purposes only. No real payment processing is implemented.
